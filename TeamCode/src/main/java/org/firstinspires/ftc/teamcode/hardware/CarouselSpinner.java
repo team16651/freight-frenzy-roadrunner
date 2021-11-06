@@ -15,6 +15,9 @@ public class CarouselSpinner {
         if (reverse){
             carouselSpinnerServo.setDirection(DcMotorSimple.Direction.REVERSE);
         }
+        else{
+            carouselSpinnerServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
 
         carouselSpinnerServo.setPower(1.0);
     }
