@@ -88,6 +88,9 @@ public class RedTeleOp extends LinearOpMode {
             if (gamepad2.a){
                 arm.grab();
             }
+
+            telemetry.addData("servo position", handServo.getPosition());
+            telemetry.update();
         }
     }
 

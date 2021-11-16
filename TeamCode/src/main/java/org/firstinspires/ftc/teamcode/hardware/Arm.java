@@ -19,11 +19,13 @@ public class Arm {
     }
 
     public void grab(){
-        handServo.setPosition(0);
+        handServo.setDirection(Servo.Direction.FORWARD);
+        handServo.setPosition(0.35);
     }
 
     public void release(){
-        handServo.setPosition(0.35);
+        handServo.setDirection(Servo.Direction.REVERSE);
+        handServo.setPosition(0);
     }
 
     public void rotate(double power, boolean up){

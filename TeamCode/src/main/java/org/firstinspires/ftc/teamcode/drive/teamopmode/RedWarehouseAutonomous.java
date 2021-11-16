@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 
@@ -30,7 +29,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class RedCarouselSpinnerAutonomous extends LinearOpMode {
+public class RedWarehouseAutonomous extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
     CRServo carouselSpinnerServo = null;
@@ -41,12 +40,13 @@ public class RedCarouselSpinnerAutonomous extends LinearOpMode {
         carouselSpinnerServo = (CRServo)hardwareMap.get("carouselSpinner");
         carouselSpinner = new CarouselSpinner(carouselSpinnerServo);
 
-        Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(-23.42, 3.66))
+        Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
+                .strafeTo(new Vector2d(33.19, 1.92))
                 .build();
 
-        Trajectory toParking = drive.trajectoryBuilder(toCarouselSpinner.end())
-                .strafeTo(new Vector2d(76.45, 0.73))
+        Trajectory toParking = drive.trajectoryBuilder(toWarehouse.end())
+//                .strafeLeft(26)
+                .strafeTo(new Vector2d(33.19, 27.66))
                 .build();
 
 
@@ -61,10 +61,8 @@ public class RedCarouselSpinnerAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        drive.followTrajectory(toCarouselSpinner);
-        carouselSpinner.spin(false);
-        this.sleep(6000);
-        carouselSpinner.stop();
+        drive.followTrajectory(toWarehouse);
+        this.sleep(500);
         drive.followTrajectory(toParking);
 
 //        while (opModeIsActive() && !isStopRequested()) {

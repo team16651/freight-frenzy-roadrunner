@@ -5,10 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 
@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class RedCarouselSpinnerAutonomous extends LinearOpMode {
+public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
     CRServo carouselSpinnerServo = null;
@@ -42,11 +42,19 @@ public class RedCarouselSpinnerAutonomous extends LinearOpMode {
         carouselSpinner = new CarouselSpinner(carouselSpinnerServo);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(-23.42, 3.66))
+                .lineToLinearHeading(new Pose2d(-26.576, -5.762, Math.toRadians(-45)))
                 .build();
 
-        Trajectory toParking = drive.trajectoryBuilder(toCarouselSpinner.end())
-                .strafeTo(new Vector2d(76.45, 0.73))
+        Trajectory toHome = drive.trajectoryBuilder(toCarouselSpinner.end())
+                .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
+                .build();
+
+        Trajectory toParking = drive.trajectoryBuilder(toHome.end())
+//                .strafeTo(new Vector2d(75.466, -0.73))
+//                .forward(72.393)
+                .lineToLinearHeading(new Pose2d(72.393, 0.04, Math.toRadians(-15)),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
                 .build();
 
 
@@ -62,9 +70,11 @@ public class RedCarouselSpinnerAutonomous extends LinearOpMode {
         waitForStart();
 
         drive.followTrajectory(toCarouselSpinner);
-        carouselSpinner.spin(false);
+        carouselSpinner.spin(true);
         this.sleep(6000);
         carouselSpinner.stop();
+        drive.followTrajectory(toHome);
+        this.sleep(500);
         drive.followTrajectory(toParking);
 
 //        while (opModeIsActive() && !isStopRequested()) {
