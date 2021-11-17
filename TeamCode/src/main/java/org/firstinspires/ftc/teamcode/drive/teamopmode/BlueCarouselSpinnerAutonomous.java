@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -33,13 +34,13 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
-    CRServo carouselSpinnerServo = null;
+    DcMotor carouselSpinnerMotor = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        carouselSpinnerServo = (CRServo)hardwareMap.get("carouselSpinner");
-        carouselSpinner = new CarouselSpinner(carouselSpinnerServo);
+        carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
+        carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(-26.576, -5.762, Math.toRadians(-45)))
@@ -70,7 +71,7 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
         waitForStart();
 
         drive.followTrajectory(toCarouselSpinner);
-        carouselSpinner.spin(true);
+        carouselSpinner.spin(false, 0.5);
         this.sleep(6000);
         carouselSpinner.stop();
         drive.followTrajectory(toHome);

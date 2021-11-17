@@ -31,14 +31,9 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 @Autonomous(group = "drive")
 public class BlueWarehouseAutonomous extends LinearOpMode {
 
-    CarouselSpinner carouselSpinner = null;
-    CRServo carouselSpinnerServo = null;
-
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        carouselSpinnerServo = (CRServo)hardwareMap.get("carouselSpinner");
-        carouselSpinner = new CarouselSpinner(carouselSpinnerServo);
 
         Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
                 .strafeTo(new Vector2d(33.19, 1.92))

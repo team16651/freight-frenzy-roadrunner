@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
@@ -29,40 +30,19 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class RedWarehouseAutonomous extends LinearOpMode {
+public class MotorTestOpMode extends LinearOpMode {
+
+    CarouselSpinner carouselSpinner = null;
+    CRServo carouselSpinnerServo = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(33.19, 1.92))
-                .build();
-
-        Trajectory toParking = drive.trajectoryBuilder(toWarehouse.end())
-//                .strafeLeft(26)
-                .strafeTo(new Vector2d(33.19, 27.66))
-                .build();
-
-
-
-//        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
-//                .forward(DISTANCE)
-//                .build();
-//
-//        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
-//                .back(DISTANCE)
-//                .build();
+        DcMotor motor = (DcMotor)hardwareMap.get("driver left");
 
         waitForStart();
 
-        drive.followTrajectory(toWarehouse);
-        this.sleep(500);
-        drive.followTrajectory(toParking);
-
-//        while (opModeIsActive() && !isStopRequested()) {
-//            drive.followTrajectory(trajectoryForward);
-//            drive.followTrajectory(trajectoryBackward);
-//        }
+        while (opModeIsActive() && !isStopRequested()) {
+            motor.setPower(1.0);
+        }
     }
 }

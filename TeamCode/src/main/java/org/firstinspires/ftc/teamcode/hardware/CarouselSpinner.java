@@ -1,28 +1,29 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class CarouselSpinner {
 
-    private CRServo carouselSpinnerServo;
+    private DcMotor carouselSpinnerMotor;
 
-    public CarouselSpinner(CRServo carouselSpinnerServo){
-        this.carouselSpinnerServo = carouselSpinnerServo;
+    public CarouselSpinner(DcMotor carouselSpinnerMotor){
+        this.carouselSpinnerMotor = carouselSpinnerMotor;
+        carouselSpinnerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void spin(boolean reverse){
+    public void spin(boolean reverse, double speed){
         if (reverse){
-            carouselSpinnerServo.setDirection(DcMotorSimple.Direction.REVERSE);
+            carouselSpinnerMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
         else{
-            carouselSpinnerServo.setDirection(DcMotorSimple.Direction.FORWARD);
+            carouselSpinnerMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         }
 
-        carouselSpinnerServo.setPower(1.0);
+        carouselSpinnerMotor.setPower(speed);
     }
 
     public void stop(){
-        carouselSpinnerServo.setPower(0.0);
+        carouselSpinnerMotor.setPower(0.0);
     }
 }

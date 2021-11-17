@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.Lift;
 public class RedTeleOp extends LinearOpMode {
 
     CarouselSpinner carouselSpinner;
-    CRServo carouselSpinnerServo;
+    DcMotor carouselSpinnerMotor;
 
     Lift lift;
     DcMotor liftMotor;
@@ -28,8 +28,8 @@ public class RedTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        carouselSpinnerServo = (CRServo)hardwareMap.get("carouselSpinner");
-        carouselSpinner = new CarouselSpinner(carouselSpinnerServo);
+        carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
+        carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
 
         liftMotor = (DcMotor)hardwareMap.get("liftMotor");
         lift = new Lift(liftMotor);
@@ -55,11 +55,11 @@ public class RedTeleOp extends LinearOpMode {
 
             drive.update();
 
-            if (gamepad1.left_trigger > 0){
-                lift.up(gamepad1.left_trigger);
+            if (gamepad1.right_trigger > 0){
+                spinCarousel(gamepad1.right_trigger);
             }
-            else if (gamepad1.right_trigger > 0){
-                lift.down(gamepad1.right_trigger);
+            else{
+                carouselSpinner.stop();
             }
 
             /* Controller 2 */
@@ -74,11 +74,11 @@ public class RedTeleOp extends LinearOpMode {
                 arm.rotate(0.0, true);
             }
 
-            if (gamepad2.b){
-                spinCarousel();
+            if (gamepad2.left_stick_y > 0){
+                lift.up(gamepad1.left_stick_y);
             }
-            else{
-                carouselSpinner.stop();
+            else if (gamepad2.left_stick_y < 0){
+                lift.down(-gamepad1.left_stick_y);
             }
 
             if (gamepad2.y){
@@ -94,7 +94,8 @@ public class RedTeleOp extends LinearOpMode {
         }
     }
 
-    protected void spinCarousel(){
-        carouselSpinner.spin(false);
+    protected void spinCarousel(double speed){
+        carouselSpinner.spin(true, speed);
     }
 }
+
