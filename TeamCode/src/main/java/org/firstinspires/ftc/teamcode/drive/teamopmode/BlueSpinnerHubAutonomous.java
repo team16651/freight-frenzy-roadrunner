@@ -6,11 +6,9 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 
 /*
@@ -31,23 +29,17 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
+public class BlueSpinnerHubAutonomous extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
     DcMotor carouselSpinnerMotor = null;
-
-    Arm arm = null;
-    DcMotor armMotor = null;
-    Servo handServo = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
-        armMotor = (DcMotor)hardwareMap.get("armMotor");
-        handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo);
+
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(-1.982, -30.827))
@@ -55,10 +47,6 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
 
         Trajectory toCarouselSpinner2 = drive.trajectoryBuilder(toCarouselSpinner.end())
                 .lineToLinearHeading(new Pose2d(-16.018, -33.375))
-                .build();
-
-        Trajectory toPark = drive.trajectoryBuilder(toCarouselSpinner2.end())
-                .lineToLinearHeading(new Pose2d(1.214, -46.602))
                 .build();
 
 
@@ -83,17 +71,12 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        arm.grab();
-        this.sleep(1500);
-        arm.move(Arm.LOW_POSITION);
-        this.sleep(500);
         drive.followTrajectory(toCarouselSpinner);
         this.sleep(500);
         drive.followTrajectory(toCarouselSpinner2);
         carouselSpinner.spin(false, 0.5);
         this.sleep(2500);
         carouselSpinner.stop();
-        drive.followTrajectory(toPark);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);

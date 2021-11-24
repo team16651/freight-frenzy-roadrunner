@@ -76,12 +76,15 @@ public class ConceptSoundsASJava extends LinearOpMode {
     // Declare OpMode members.
     private boolean goldFound;      // Sound file present flags
     private boolean silverFound;
+    private boolean duckFound;
 
     private boolean isX = false;    // Gamepad button state variables
     private boolean isB = false;
+    private boolean isA = false;
 
     private boolean wasX = false;   // Gamepad button history variables
     private boolean WasB = false;
+    private boolean wasA = false;
 
     @Override
     public void runOpMode() {
@@ -89,6 +92,10 @@ public class ConceptSoundsASJava extends LinearOpMode {
         // Determine Resource IDs for sounds built into the RC application.
         int silverSoundID = hardwareMap.appContext.getResources().getIdentifier("silver", "raw", hardwareMap.appContext.getPackageName());
         int goldSoundID   = hardwareMap.appContext.getResources().getIdentifier("gold",   "raw", hardwareMap.appContext.getPackageName());
+        int duckSoundID = hardwareMap.appContext.getResources().getIdentifier("duck", "raw", hardwareMap.appContext.getOpPackageName());
+        telemetry.addData("duckSoundId: ", duckSoundID);
+
+        SoundPlayer.getInstance().setMasterVolume(1.0f);
 
         // Determine if sound resources are found.
         // Note: Preloading is NOT required, but it's a good way to verify all your sounds are available before you run.
@@ -98,16 +105,20 @@ public class ConceptSoundsASJava extends LinearOpMode {
         if (silverSoundID != 0)
             silverFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, silverSoundID);
 
+        if (duckSoundID != 0)
+            duckFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, duckSoundID);
+
         // Display sound status
         telemetry.addData("gold resource",   goldFound ?   "Found" : "NOT found\n Add gold.wav to /src/main/res/raw" );
         telemetry.addData("silver resource", silverFound ? "Found" : "Not found\n Add silver.wav to /src/main/res/raw" );
+        telemetry.addData("duck resource", duckFound ? "Found" : "Not found\n Add duck.wav to /src/main/res/raw" );
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData(">", "Press Start to continue");
         telemetry.update();
         waitForStart();
 
-        telemetry.addData(">", "Press X, B to play sounds.");
+        telemetry.addData(">", "Press X, B, A to play sounds.");
         telemetry.update();
 
         // run until the end of the match (driver presses STOP)
@@ -122,14 +133,22 @@ public class ConceptSoundsASJava extends LinearOpMode {
 
             // say Gold each time gamepad B is pressed  (This sound is a resource)
             if (goldFound && (isB = gamepad1.b) && !WasB) {
-                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);
+//                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);
+                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, duckSoundID);
                 telemetry.addData("Playing", "Resource Gold");
+                telemetry.update();
+            }
+
+            if (duckFound && isA && gamepad1.a) {
+                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, duckSoundID);
+                telemetry.addData("Playing", "Resource Duck");
                 telemetry.update();
             }
 
             // Save last button states
             wasX = isX;
             WasB = isB;
+            wasA = isA;
         }
     }
 }

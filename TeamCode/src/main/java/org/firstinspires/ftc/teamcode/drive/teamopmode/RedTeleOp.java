@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.teamopmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -64,15 +65,25 @@ public class RedTeleOp extends LinearOpMode {
 
             /* Controller 2 */
 
-            if (gamepad2.left_trigger > 0){
-                arm.rotate(gamepad2.left_trigger, true);
+
+            if (gamepad2.dpad_up){
+                arm.move(Arm.HIGH_POSITION);
+            }else if (gamepad2.dpad_down){
+                arm.move(Arm.GROUND);
+            }else if (gamepad2.dpad_left){
+                arm.move(Arm.LOW_POSITION);
+            }else if (gamepad2.dpad_right){
+                arm.move(Arm.MID_POSITION);
             }
-            else if (gamepad2.right_trigger > 0){
-                arm.rotate(gamepad2.right_trigger, false);
-            }
-            else {
-                arm.rotate(0.0, true);
-            }
+//            if (gamepad2.left_trigger > 0){
+//                arm.rotate(gamepad2.left_trigger, true);
+//            }
+//            else if (gamepad2.right_trigger > 0){
+//                arm.rotate(gamepad2.right_trigger, false);
+//            }
+//            else {
+//                arm.rotate(0.0, true);
+//            }
 
             if (gamepad2.left_stick_y > 0){
                 lift.up(gamepad1.left_stick_y);
@@ -89,6 +100,7 @@ public class RedTeleOp extends LinearOpMode {
                 arm.grab();
             }
 
+            telemetry.addData("arm motor position: ", armMotor.getCurrentPosition());
             telemetry.addData("servo position", handServo.getPosition());
             telemetry.update();
         }
