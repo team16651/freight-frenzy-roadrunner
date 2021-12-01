@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
+public class BlueCarouselWarehouse extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
     DcMotor carouselSpinnerMotor = null;
@@ -49,17 +49,43 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
         handServo = (Servo)hardwareMap.get("handServo");
         arm = new Arm(armMotor, handServo);
 
+//        Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
+//                .lineToLinearHeading(new Pose2d( 0,-13.570))
+//                .build();
+//
+//        Trajectory toCarouselSpinner2 = drive.trajectoryBuilder(toCarouselSpinner.end())
+//                .lineToLinearHeading(new Pose2d(-0.1, -13.570))
+//                .build();
+
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(-1.982, -30.827))
+                .lineToLinearHeading(new Pose2d( 0,-3.5))
                 .build();
+
+
 
         Trajectory toCarouselSpinner2 = drive.trajectoryBuilder(toCarouselSpinner.end())
-                .lineToLinearHeading(new Pose2d(-16.018, -33.375))
+                .lineToLinearHeading(new Pose2d(-5.1, -3.5, 5.6),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
                 .build();
 
-        Trajectory toPark = drive.trajectoryBuilder(toCarouselSpinner2.end())
-                .lineToLinearHeading(new Pose2d(1.214, -46.602))
+
+
+
+        Trajectory toShippingMid = drive.trajectoryBuilder(toCarouselSpinner2.end())
+                .lineToLinearHeading(new Pose2d(36.049, -3.5, 5.05))
                 .build();
+
+        Trajectory toShippingMid2 = drive.trajectoryBuilder(toShippingMid.end())
+                .lineToLinearHeading(new Pose2d(36.049, -19.385, 5.05))
+                .build();
+
+        Trajectory toPark = drive.trajectoryBuilder(toShippingMid.end())
+                .lineToLinearHeading(new Pose2d(92.466, -3.777, 0))
+                .build();
+//       new TrajectoryBuilder(new Pose2d())
+//  .splineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)), Math.toRadians(0))
+//  .build()
 
 
 
@@ -85,7 +111,7 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
 
         arm.grab();
         this.sleep(1500);
-        arm.move(Arm.LOW_POSITION);
+        arm.move(Arm.MID_POSITION);
         this.sleep(500);
         drive.followTrajectory(toCarouselSpinner);
         this.sleep(500);
@@ -93,6 +119,13 @@ public class BlueCarouselSpinnerAutonomous extends LinearOpMode {
         carouselSpinner.spin(false, 0.5);
         this.sleep(2500);
         carouselSpinner.stop();
+        drive.followTrajectory(toShippingMid);
+        this.sleep(500);
+        drive.followTrajectory(toShippingMid2);
+        arm.release();
+        this.sleep(1500);
+        drive.followTrajectory(toShippingMid);
+        this.sleep(500);
         drive.followTrajectory(toPark);
 
 //        while (opModeIsActive() && !isStopRequested()) {
