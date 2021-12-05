@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -31,6 +32,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
+//@Disabled
 public class BlueCarouselWarehouse extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
@@ -69,20 +71,27 @@ public class BlueCarouselWarehouse extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
                 .build();
 
+        Trajectory moveFromDuck = drive.trajectoryBuilder(toCarouselSpinner2.end())
+                .lineToLinearHeading(new Pose2d(-5.1, -5.5, 5.6))
+                .build();
 
 
-
-        Trajectory toShippingMid = drive.trajectoryBuilder(toCarouselSpinner2.end())
-                .lineToLinearHeading(new Pose2d(36.049, -3.5, 5.05))
+        Trajectory toShippingMid = drive.trajectoryBuilder(moveFromDuck.end())
+                .lineToLinearHeading(new Pose2d(36.049, -5.5, 5.05))
                 .build();
 
         Trajectory toShippingMid2 = drive.trajectoryBuilder(toShippingMid.end())
                 .lineToLinearHeading(new Pose2d(36.049, -19.385, 5.05))
                 .build();
 
-        Trajectory toPark = drive.trajectoryBuilder(toShippingMid.end())
-                .lineToLinearHeading(new Pose2d(92.466, -3.777, 0))
+        Trajectory toPark = drive.trajectoryBuilder(toShippingMid2.end())
+                .lineToLinearHeading(new Pose2d(41.688, 0.75, 0.2))
                 .build();
+
+        Trajectory toPark2 = drive.trajectoryBuilder(toPark.end())
+                .lineToLinearHeading(new Pose2d(96.044, 0.75, 0.2))
+                .build();
+
 //       new TrajectoryBuilder(new Pose2d())
 //  .splineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)), Math.toRadians(0))
 //  .build()
@@ -119,14 +128,16 @@ public class BlueCarouselWarehouse extends LinearOpMode {
         carouselSpinner.spin(false, 0.5);
         this.sleep(2500);
         carouselSpinner.stop();
+        drive.followTrajectory(moveFromDuck);
+        this.sleep(500);
         drive.followTrajectory(toShippingMid);
         this.sleep(500);
         drive.followTrajectory(toShippingMid2);
         arm.release();
         this.sleep(1500);
-        drive.followTrajectory(toShippingMid);
-        this.sleep(500);
         drive.followTrajectory(toPark);
+        this.sleep(500);
+        drive.followTrajectory(toPark2);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);

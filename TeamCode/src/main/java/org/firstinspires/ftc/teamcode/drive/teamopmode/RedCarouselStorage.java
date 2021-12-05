@@ -9,8 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 
 /*
@@ -31,24 +34,46 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class RedCarouselSpinnerAutonomous extends LinearOpMode {
+public class RedCarouselStorage extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
     DcMotor carouselSpinnerMotor = null;
+
+    Arm arm = null;
+    DcMotor armMotor = null;
+    Servo handServo = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
+        armMotor = (DcMotor)hardwareMap.get("armMotor");
+        handServo = (Servo)hardwareMap.get("handServo");
+        arm = new Arm(armMotor, handServo);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(-23.42, 3.66))
+                .strafeTo(new Vector2d(-15.000, 5.355))
                 .build();
 
-        Trajectory toParking = drive.trajectoryBuilder(toCarouselSpinner.end())
-                .strafeTo(new Vector2d(76.45, 0.73))
+        Trajectory toShippingHub = drive.trajectoryBuilder(toCarouselSpinner.end())
+                .lineToLinearHeading(new Pose2d(21.712, 9.811, 1.427),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
                 .build();
+
+        Trajectory toShippingHub2 = drive.trajectoryBuilder(toShippingHub.end())
+                .lineToLinearHeading(new Pose2d(23.924, 22.819, 1.427))
+                .build();
+
+        Trajectory toPark = drive.trajectoryBuilder(toShippingHub2.end())
+                .lineToLinearHeading(new Pose2d(21.712, 9.811, 1.427))
+                .build();
+
+        Trajectory toPark2 = drive.trajectoryBuilder(toPark.end())
+                .lineToLinearHeading(new Pose2d(-21.066, 27.936, 0))
+                .build();
+
 
 
 
@@ -62,11 +87,23 @@ public class RedCarouselSpinnerAutonomous extends LinearOpMode {
 
         waitForStart();
 
+        arm.grab();
+        this.sleep(1500);
+        arm.move(Arm.MID_POSITION);
+        this.sleep(500);
         drive.followTrajectory(toCarouselSpinner);
         carouselSpinner.spin(true, 0.5);
-        this.sleep(6000);
+        this.sleep(2500);
         carouselSpinner.stop();
-        drive.followTrajectory(toParking);
+        this.sleep(500);
+        drive.followTrajectory(toShippingHub);
+        this.sleep(500);
+        drive.followTrajectory(toShippingHub2);
+        arm.release();
+        this.sleep(500);
+        drive.followTrajectory(toPark);
+        this.sleep(500);
+        drive.followTrajectory(toPark2);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);

@@ -7,8 +7,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 
 /*
@@ -29,19 +33,36 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-public class RedWarehouseAutonomous extends LinearOpMode {
+public class RedWarehouseInward extends LinearOpMode {
+    Arm arm = null;
+    DcMotor armMotor = null;
+    Servo handServo = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        armMotor = (DcMotor)hardwareMap.get("armMotor");
+        handServo = (Servo)hardwareMap.get("handServo");
+        arm = new Arm(armMotor, handServo);
+
+
+        Trajectory toShippingHub = drive.trajectoryBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(-2.105, 21.214, 1.929))
+                .build();
+
+        Trajectory toHome = drive.trajectoryBuilder(toShippingHub.end())
+                .lineToLinearHeading(new Pose2d(0,0,0),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
+                .build();
 
         Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(33.19, 1.92))
+                .strafeTo(new Vector2d(44.698, 1.62))
                 .build();
 
         Trajectory toParking = drive.trajectoryBuilder(toWarehouse.end())
 //                .strafeLeft(26)
-                .strafeTo(new Vector2d(33.19, 27.66))
+                .strafeTo(new Vector2d(44.698, 29.580))
                 .build();
 
 
@@ -56,6 +77,15 @@ public class RedWarehouseAutonomous extends LinearOpMode {
 
         waitForStart();
 
+        arm.grab();
+        this.sleep(1500);
+        arm.move(Arm.MID_POSITION);
+        this.sleep(500);
+        drive.followTrajectory(toShippingHub);
+        arm.release();
+        this.sleep(1500);
+        drive.followTrajectory(toHome);
+        this.sleep(500);
         drive.followTrajectory(toWarehouse);
         this.sleep(500);
         drive.followTrajectory(toParking);

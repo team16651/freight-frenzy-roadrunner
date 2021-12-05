@@ -2,14 +2,18 @@ package org.firstinspires.ftc.teamcode.drive.teamopmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
 
 /*
@@ -30,36 +34,39 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
-public class BlueSpinnerHubAutonomous extends LinearOpMode {
+public class BlueWarehouseInward extends LinearOpMode {
 
-    CarouselSpinner carouselSpinner = null;
-    DcMotor carouselSpinnerMotor = null;
+    Arm arm = null;
+    DcMotor armMotor = null;
+    Servo handServo = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
-        carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
+        armMotor = (DcMotor)hardwareMap.get("armMotor");
+        handServo = (Servo)hardwareMap.get("handServo");
+        arm = new Arm(armMotor, handServo);
 
 
-        Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(-1.982, -30.827))
-                .build();
-
-        Trajectory toCarouselSpinner2 = drive.trajectoryBuilder(toCarouselSpinner.end())
-                .lineToLinearHeading(new Pose2d(-16.018, -33.375))
+        Trajectory toShippingHub = drive.trajectoryBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(-2.105, -21.214, 4.354))
                 .build();
 
 
+        Trajectory toHome = drive.trajectoryBuilder(toShippingHub.end())
+                .lineToLinearHeading(new Pose2d(0,0,0),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
+                .build();
 
-//        Trajectory toParking = drive.trajectoryBuilder(toHome.end())
-////                .strafeTo(new Vector2d(75.466, -0.73))
-////                .forward(72.393)
-//                .lineToLinearHeading(new Pose2d(72.393, 0.04, Math.toRadians(-15)),
-//                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-//                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
-//                .build();
+        Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
+                .strafeTo(new Vector2d(44.698, -1.62))
+                .build();
+
+        Trajectory toParking = drive.trajectoryBuilder(toWarehouse.end())
+//                .strafeLeft(26)
+                .strafeTo(new Vector2d(44.698, -29.580))
+                .build();
 
 
 
@@ -72,13 +79,18 @@ public class BlueSpinnerHubAutonomous extends LinearOpMode {
 //                .build();
 
         waitForStart();
-
-        drive.followTrajectory(toCarouselSpinner);
+        arm.grab();
+        this.sleep(1500);
+        arm.move(Arm.MID_POSITION);
         this.sleep(500);
-        drive.followTrajectory(toCarouselSpinner2);
-        carouselSpinner.spin(false, 0.5);
-        this.sleep(2500);
-        carouselSpinner.stop();
+        drive.followTrajectory(toShippingHub);
+        arm.release();
+        this.sleep(1500);
+        drive.followTrajectory(toHome);
+        this.sleep(500);
+        drive.followTrajectory(toWarehouse);
+        this.sleep(500);
+        drive.followTrajectory(toParking);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);
