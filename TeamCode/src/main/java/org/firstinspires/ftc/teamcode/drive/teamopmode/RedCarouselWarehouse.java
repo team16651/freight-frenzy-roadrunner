@@ -48,7 +48,7 @@ public class RedCarouselWarehouse extends LinearOpMode {
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo);
+        arm = new Arm(armMotor, handServo, true);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
                 .strafeTo(new Vector2d(-15.000, 5.355))
@@ -102,6 +102,7 @@ public class RedCarouselWarehouse extends LinearOpMode {
         drive.followTrajectory(toPark);
         this.sleep(500);
         drive.followTrajectory(toPark2);
+        arm.move(Arm.PARK_POSITION);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);

@@ -66,24 +66,29 @@ public class RedTeleOp extends LinearOpMode {
             /* Controller 2 */
 
 
-            if (gamepad2.dpad_up){
-                arm.move(Arm.HIGH_POSITION);
-            }else if (gamepad2.dpad_down){
-                arm.move(Arm.GROUND);
-            }else if (gamepad2.dpad_left){
-                arm.move(Arm.LOW_POSITION);
-            }else if (gamepad2.dpad_right){
-                arm.move(Arm.MID_POSITION);
+            if (gamepad2.left_trigger > 0){
+                arm.rotate(gamepad2.left_trigger, true);
             }
-//            if (gamepad2.left_trigger > 0){
-//                arm.rotate(gamepad2.left_trigger, true);
+            else if (gamepad2.right_trigger > 0){
+                arm.rotate(gamepad2.right_trigger, false);
+            }
+            else {
+                arm.rotate(0.0, true);
+            }
+
+//            if (gamepad2.dpad_up){
+//                arm.move(Arm.HIGH_POSITION);
 //            }
-//            else if (gamepad2.right_trigger > 0){
-//                arm.rotate(gamepad2.right_trigger, false);
+//            else if (gamepad2.dpad_left){
+//                arm.move(Arm.LOW_POSITION);
 //            }
-//            else {
-//                arm.rotate(0.0, true);
+//            else if (gamepad2.dpad_right){
+//                arm.move(Arm.MID_POSITION);
 //            }
+//            else if (gamepad2.dpad_down){
+//                arm.move(Arm.GROUND);
+//            }
+
 
             if (gamepad2.left_stick_y > 0){
                 lift.up(gamepad1.left_stick_y);

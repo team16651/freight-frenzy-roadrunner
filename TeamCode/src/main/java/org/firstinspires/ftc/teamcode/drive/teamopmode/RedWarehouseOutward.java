@@ -41,7 +41,7 @@ public class RedWarehouseOutward extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo);
+        arm = new Arm(armMotor, handServo, true);
 
 
         Trajectory toShippingHub = drive.trajectoryBuilder(new Pose2d())
@@ -85,11 +85,6 @@ public class RedWarehouseOutward extends LinearOpMode {
         drive.followTrajectory(toHome);
         this.sleep(500);
         drive.followTrajectory(toWarehouse);
-
-
-//        while (opModeIsActive() && !isStopRequested()) {
-//            drive.followTrajectory(trajectoryForward);
-//            drive.followTrajectory(trajectoryBackward);
-//        }
+        arm.move(Arm.PARK_POSITION);
     }
 }

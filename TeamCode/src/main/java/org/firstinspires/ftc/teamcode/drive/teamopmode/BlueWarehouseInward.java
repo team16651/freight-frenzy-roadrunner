@@ -45,7 +45,7 @@ public class BlueWarehouseInward extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo);
+        arm = new Arm(armMotor, handServo, true);
 
 
         Trajectory toShippingHub = drive.trajectoryBuilder(new Pose2d())
@@ -91,6 +91,7 @@ public class BlueWarehouseInward extends LinearOpMode {
         drive.followTrajectory(toWarehouse);
         this.sleep(500);
         drive.followTrajectory(toParking);
+        arm.move(Arm.PARK_POSITION);
 
 //        while (opModeIsActive() && !isStopRequested()) {
 //            drive.followTrajectory(trajectoryForward);
