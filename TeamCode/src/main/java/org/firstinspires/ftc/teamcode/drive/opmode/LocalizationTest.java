@@ -5,8 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import java.util.Locale;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -17,11 +21,15 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+    DistanceSensor sensorDistanceLeft;
+    DistanceSensor sensorDistanceRight;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sensorDistanceLeft = hardwareMap.get(DistanceSensor.class, "distanceLeft");
+        sensorDistanceRight = hardwareMap.get(DistanceSensor.class, "distanceRight");
 
         waitForStart();
 
@@ -40,6 +48,10 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("Distance Left (cm)",
+                    String.format(Locale.US, "%.02f", sensorDistanceLeft.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Distance Right (cm)",
+                    String.format(Locale.US, "%.02f", sensorDistanceRight.getDistance(DistanceUnit.CM)));
             telemetry.update();
         }
     }

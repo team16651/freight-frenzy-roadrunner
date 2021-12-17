@@ -15,9 +15,9 @@ public class Arm {
 
     public static final int GROUND = 0;
     public static final int PARK_POSITION = 100;
-    public static final int LOW_POSITION = 369;
+    public static final int LOW_POSITION = 380;
     public static final int MID_POSITION = 825;
-    public static final int HIGH_POSITION = 1246;
+    public static final int HIGH_POSITION = 1200;
 
 
     private int currentState = GROUND;
