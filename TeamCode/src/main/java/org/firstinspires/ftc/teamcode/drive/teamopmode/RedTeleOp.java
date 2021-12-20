@@ -25,6 +25,8 @@ public class RedTeleOp extends LinearOpMode {
     DcMotor armMotor;
     Servo handServo;
 
+    CRServo lucasServo;
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -38,6 +40,8 @@ public class RedTeleOp extends LinearOpMode {
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
         arm = new Arm(armMotor, handServo);
+
+        lucasServo = (CRServo) hardwareMap.get("lucas");
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -58,9 +62,11 @@ public class RedTeleOp extends LinearOpMode {
 
             if (gamepad1.right_trigger > 0){
                 spinCarousel(gamepad1.right_trigger);
+                lucasServo.setPower(1.0);
             }
             else{
                 carouselSpinner.stop();
+                lucasServo.setPower(0.0);
             }
 
             /* Controller 2 */
