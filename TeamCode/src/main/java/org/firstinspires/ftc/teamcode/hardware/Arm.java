@@ -10,17 +10,21 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 public class Arm {
 
     private static final double MAX_ROTATION_SPEED = 1.0;
-    DcMotor armMotor = null;
-    Servo handServo = null;
+    private DcMotor armMotor = null;
+    private Servo handServo = null;
 
     public static final int GROUND = 0;
     public static final int PARK_POSITION = 100;
-    public static final int LOW_POSITION = 380;
-    public static final int MID_POSITION = 825;
-    public static final int HIGH_POSITION = 1200;
+    public static final int LOW_POSITION = 390;
+    public static final int MID_POSITION = 880;
+    public static final int HIGH_POSITION = 1270;
 
 
     private int currentState = GROUND;
+
+    public DcMotor getArmMotor(){
+        return armMotor;
+    }
 
     public Arm(DcMotor armMotor, Servo handServo){
         this.armMotor = armMotor;
@@ -35,12 +39,12 @@ public class Arm {
 
     public void grab(){
         handServo.setDirection(Servo.Direction.FORWARD);
-        handServo.setPosition(0.35);
+        handServo.setPosition(0.0);
     }
 
     public void release(){
         handServo.setDirection(Servo.Direction.REVERSE);
-        handServo.setPosition(0);
+        handServo.setPosition(0.5);
     }
 
     public int calculateTargetPosition(boolean up, int currentState){

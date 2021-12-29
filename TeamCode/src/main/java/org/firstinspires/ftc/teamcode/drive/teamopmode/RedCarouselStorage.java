@@ -89,7 +89,7 @@ public class RedCarouselStorage extends LinearOpMode {
 
         arm.grab();
         this.sleep(1500);
-        arm.move(Arm.MID_POSITION);
+        arm.move(Arm.HIGH_POSITION);
         this.sleep(500);
         drive.followTrajectory(toCarouselSpinner);
         carouselSpinner.spin(true, 0.5);

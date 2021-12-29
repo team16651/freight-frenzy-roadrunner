@@ -15,6 +15,10 @@ import org.firstinspires.ftc.teamcode.hardware.Lift;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(group = "drive")
 public class RedTeleOp extends LinearOpMode {
 
+    static final double THROTTLE = 0.75;
+    static final double STRAFE_THROTTLE = 0.5;
+    static final double ROTATION_THROTTLE = 0.5;
+
     CarouselSpinner carouselSpinner;
     DcMotor carouselSpinnerMotor;
 
@@ -52,9 +56,9 @@ public class RedTeleOp extends LinearOpMode {
             /* Controller 1 */
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y * THROTTLE,
+                            -gamepad1.left_stick_x * STRAFE_THROTTLE,
+                            -gamepad1.right_stick_x * ROTATION_THROTTLE
                     )
             );
 

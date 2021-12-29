@@ -77,7 +77,7 @@ public class RedWarehouseOutward extends LinearOpMode {
 
         arm.grab();
         this.sleep(1500);
-        arm.move(Arm.MID_POSITION);
+        arm.move(Arm.HIGH_POSITION);
         this.sleep(500);
         drive.followTrajectory(toShippingHub);
         arm.release();

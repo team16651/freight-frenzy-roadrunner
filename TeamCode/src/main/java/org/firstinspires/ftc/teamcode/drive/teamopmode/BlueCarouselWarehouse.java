@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
-//@Disabled
+@Disabled
 public class BlueCarouselWarehouse extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;

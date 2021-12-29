@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.hardware.CarouselSpinner;
  */
 @Config
 @Autonomous(group = "drive")
+@Disabled
 public class RedCarouselWarehouse extends LinearOpMode {
 
     CarouselSpinner carouselSpinner = null;
@@ -87,7 +89,7 @@ public class RedCarouselWarehouse extends LinearOpMode {
 
         arm.grab();
         this.sleep(1500);
-        arm.move(Arm.MID_POSITION);
+        arm.move(Arm.HIGH_POSITION);
         this.sleep(500);
         drive.followTrajectory(toCarouselSpinner);
         carouselSpinner.spin(true, 0.5);
