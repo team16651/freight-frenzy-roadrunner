@@ -86,10 +86,9 @@ public class SensorRedCarouselStorage extends LinearOpMode {
             arm.move(Arm.HIGH_POSITION);
             yOffset = 2;
         }
-
-        int armEncoderValue = arm.getArmMotor().getCurrentPosition();
-        telemetry.addData("arm motor encoder value: ", armEncoderValue);
-        telemetry.update();
+        else if (location.equals(ShippingElementDetector.LEFT)){
+            arm.move(Arm.LOW_POSITION);
+        }
 
         Trajectory toShippingHub = drive.trajectoryBuilder(toDetect.end())
                 .lineToLinearHeading(new Pose2d(21.712, 9.811, 1.427),
@@ -109,6 +108,7 @@ public class SensorRedCarouselStorage extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-21.066, 27.936, 0))
                 .build();
 
+        this.sleep(1500);
         drive.followTrajectory(toShippingHub);
         this.sleep(500);
         drive.followTrajectory(toShippingHub2);

@@ -57,7 +57,8 @@ public class SensorBlueCarouselStorage extends LinearOpMode {
                 .build();
 
         Trajectory toDetect = drive.trajectoryBuilder(avoidDuck.end())
-                .lineToLinearHeading(new Pose2d(14.834, -18.752, 4.712))
+                //.lineToLinearHeading(new Pose2d(14.834, -18.752, 4.712))
+                .lineToLinearHeading(new Pose2d(13, -19.25, 4.712))
                 .build();
 
         Trajectory toShippingMid = drive.trajectoryBuilder(toDetect.end())
@@ -79,10 +80,13 @@ public class SensorBlueCarouselStorage extends LinearOpMode {
         drive.followTrajectory(avoidDuck);
         drive.followTrajectory(toDetect);
         String location = pringles.detectPringle();
+
+        this.sleep(500);
+        drive.followTrajectory(toShippingMid);
         double yOffset = 0;
         if (location.equals(ShippingElementDetector.RIGHT)){
             arm.move(Arm.HIGH_POSITION);
-            yOffset = -2;
+            yOffset = -4;
         }else if (location.equals(ShippingElementDetector.NEITHER)){
             arm.move(Arm.LOW_POSITION);
             yOffset = -3;
@@ -100,9 +104,7 @@ public class SensorBlueCarouselStorage extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-9.970, -27.670, 0))
                 .build();
 
-        this.sleep(500);
-        drive.followTrajectory(toShippingMid);
-        this.sleep(500);
+        this.sleep(1500);
         drive.followTrajectory(toShippingMid2);
         arm.release();
         this.sleep(1500);

@@ -75,6 +75,7 @@ public class SensorBlueWarehouseInward extends LinearOpMode {
             yOffset = -1;
         }
 
+        this.sleep(1500);
         Trajectory toShippingHub = drive.trajectoryBuilder(toDetect.end())
                 .lineToLinearHeading(new Pose2d(-2.105, -21.214 + yOffset, 4.354))
                 .build();

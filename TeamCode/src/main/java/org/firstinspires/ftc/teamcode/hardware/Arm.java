@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Arm {
 
@@ -15,16 +12,11 @@ public class Arm {
 
     public static final int GROUND = 0;
     public static final int PARK_POSITION = 100;
-    public static final int LOW_POSITION = 390;
-    public static final int MID_POSITION = 880;
+    public static final int LOW_POSITION = 370;
+    public static final int MID_POSITION = 840;
     public static final int HIGH_POSITION = 1270;
 
-
     private int currentState = GROUND;
-
-    public DcMotor getArmMotor(){
-        return armMotor;
-    }
 
     public Arm(DcMotor armMotor, Servo handServo){
         this.armMotor = armMotor;
@@ -47,50 +39,19 @@ public class Arm {
         handServo.setPosition(0.5);
     }
 
-    public int calculateTargetPosition(boolean up, int currentState){
-        return 0;
-    }
-
-    public void togglePosition(boolean up){
-        int targetState = GROUND;
-        int targetNum = 0;
-
-
-        if (up){
-            if (targetNum == 0){
-                targetState = LOW_POSITION;
-                targetNum = 1;
-            }
-            else if (targetNum == 1){
-                targetState = MID_POSITION;
-                targetNum = 2;
-            }
-        }
-        else{
-            if (targetNum == 1){
-                targetState = GROUND;
-                targetNum = 0;
-            }else if (targetNum == 2){
-                targetState = LOW_POSITION;
-                targetNum = 1;
-            }
-        }
-        currentState = targetState;
-
-    }
-
-
-    public void move (int targetState){
+    public int move (int targetState){
         armMotor.setTargetPosition(targetState);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (targetState != GROUND) {
-            armMotor.setPower(1.0);
+            armMotor.setPower(0.25);
         }
         else{
             armMotor.setPower(0.0);
         }
 
+        return armMotor.getCurrentPosition();
     }
+
     public void rotate(double power, boolean up){
         if (up) {
             armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -101,5 +62,4 @@ public class Arm {
 
         armMotor.setPower(power * MAX_ROTATION_SPEED);
     }
-
 }
