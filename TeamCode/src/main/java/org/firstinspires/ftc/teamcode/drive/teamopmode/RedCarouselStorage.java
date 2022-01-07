@@ -50,7 +50,7 @@ public class RedCarouselStorage extends LinearOpMode {
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo, true);
+        arm = new Arm(armMotor, handServo);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
                 .strafeTo(new Vector2d(-15.000, 5.355))

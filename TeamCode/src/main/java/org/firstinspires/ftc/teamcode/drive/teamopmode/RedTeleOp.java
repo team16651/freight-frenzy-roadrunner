@@ -5,6 +5,7 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -28,6 +29,7 @@ public class RedTeleOp extends LinearOpMode {
     Arm arm;
     DcMotor armMotor;
     Servo handServo;
+    DigitalChannel armTouchSensor;
 
     CRServo lucasServo;
 
@@ -43,7 +45,8 @@ public class RedTeleOp extends LinearOpMode {
 
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo);
+        armTouchSensor = (DigitalChannel)hardwareMap.get("touch");
+        arm = new Arm(armMotor, handServo, armTouchSensor);
 
         lucasServo = (CRServo) hardwareMap.get("lucas");
 

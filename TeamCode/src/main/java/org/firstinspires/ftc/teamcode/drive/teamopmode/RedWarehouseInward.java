@@ -43,7 +43,7 @@ public class RedWarehouseInward extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo, true);
+        arm = new Arm(armMotor, handServo);
 
 
         Trajectory toShippingHub = drive.trajectoryBuilder(new Pose2d())

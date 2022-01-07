@@ -31,7 +31,7 @@ public class BlueCarouselStorage extends LinearOpMode {
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo, true);
+        arm = new Arm(armMotor, handServo);
 
         Trajectory toCarouselSpinner = drive.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d( 0,-3.5))

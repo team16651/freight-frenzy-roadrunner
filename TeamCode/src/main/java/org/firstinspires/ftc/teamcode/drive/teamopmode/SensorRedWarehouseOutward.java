@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.teamopmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,91 +9,109 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.ShippingElementDetector;
 
-/*
- * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
- * classes). The robot drives back and forth in a straight line indefinitely. Utilization of the
- * dashboard is recommended for this tuning routine. To access the dashboard, connect your computer
- * to the RC's WiFi network. In your browser, navigate to https://192.168.49.1:8080/dash if you're
- * using the RC phone or https://192.168.43.1:8080/dash if you are using the Control Hub. Once
- * you've successfully connected, start the program, and your robot will begin moving forward and
- * backward. You should observe the target position (green) and your pose estimate (blue) and adjust
- * your follower PID coefficients such that you follow the target position as accurately as possible.
- * If you are using SampleMecanumDrive, you should be tuning TRANSLATIONAL_PID and HEADING_PID.
- * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
- * These coefficients can be tuned live in dashboard.
- *
- * This opmode is designed as a convenient, coarse tuning for the follower PID coefficients. It
- * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
- */
 @Config
 @Autonomous(group = "drive")
 public class SensorRedWarehouseOutward extends LinearOpMode {
-    Arm arm = null;
-    DcMotor armMotor = null;
-    Servo handServo = null;
 
-    ShippingElementDetector pringles = null;
-    DistanceSensor leftSensor = null;
-    DistanceSensor rightSensor = null;
+    private Arm arm = null;
+    private DcMotor armMotor = null;
+    private Servo handServo = null;
+
+    private ShippingElementDetector shippingElementDetector = null;
+    private DistanceSensor leftSensor = null;
+    private DistanceSensor rightSensor = null;
+
+    private Pose2d poseHome = new Pose2d(0, 0, 0);
+    private Pose2d poseDetectRandomization = new Pose2d(12.567,20.186,1.571);
+    private Pose2d poseShippingHub = new Pose2d(-2.105, 21.214, 1.929);
+    private Pose2d poseWarehousePose = new Pose2d(44.698, 1.62, 0);
+
+    protected Trajectory trajectoryHomeToDetect = null;
+    protected Trajectory trajectoryDetectToShippingHub = null;
+    protected Trajectory trajectoryShippingHubToHome = null;
+    protected Trajectory trajectoryHomeToWarehouse = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");
-        arm = new Arm(armMotor, handServo, true);
+        arm = new Arm(armMotor, handServo);
+
         leftSensor = (DistanceSensor)hardwareMap.get("distanceLeft");
         rightSensor = (DistanceSensor)hardwareMap.get("distanceRight");
-        pringles = new ShippingElementDetector(leftSensor, rightSensor);
-
-        Trajectory toDetect = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(12.567,20.186,1.571))
-                .build();
+        shippingElementDetector = new ShippingElementDetector(leftSensor, rightSensor);
 
         waitForStart();
 
-        arm.grab();
-        this.sleep(1500);
-        arm.move(Arm.MID_POSITION);
-        this.sleep(500);
-        drive.followTrajectory(toDetect);
-        this.sleep(500);
+        runAutonomous(drive, arm, shippingElementDetector);
+    }
 
-        String location = pringles.detectPringle();
+    protected void runAutonomous(SampleMecanumDrive drive, Arm arm, ShippingElementDetector shippingElementDetector){
+        arm.grab();
+        sleep(1500);
+        arm.move(Arm.MID_POSITION);
+        driveToDetect(drive);
+        double yOffset = detectShippingElementAndReturnYOffset(shippingElementDetector, arm);
+        driveToShippingHub(drive, yOffset);
+        arm.release();
+        sleep(1000);
+        driveToHome(drive);
+        driveToWarehouse(drive);
+        arm.move(Arm.PARK_POSITION);
+    }
+
+    private void driveToDetect(SampleMecanumDrive drive){
+        trajectoryHomeToDetect = drive.trajectoryBuilder(poseHome)
+                .lineToLinearHeading(poseDetectRandomization)
+                .build();
+
+        drive.followTrajectory(trajectoryHomeToDetect);
+    }
+
+    private double detectShippingElementAndReturnYOffset(ShippingElementDetector shippingElementDetector, Arm arm){
+        String location = shippingElementDetector.detectPringle();
         double yOffset = 0;
-        if (location.equals(ShippingElementDetector.LEFT)){
+
+        if (ShippingElementDetector.LEFT.equals(location)){
             arm.move(Arm.LOW_POSITION);
             yOffset = 0.5;
-        }else if (location.equals(ShippingElementDetector.NEITHER)){
+        }
+        else if (ShippingElementDetector.NEITHER.equals(location)){
             arm.move(Arm.HIGH_POSITION);
             yOffset = 2;
         }
 
-        Trajectory toShippingHub = drive.trajectoryBuilder(toDetect.end())
-                .lineToLinearHeading(new Pose2d(-2.105, 21.214 + yOffset, 1.929))
+        return yOffset;
+    }
+
+    private void driveToShippingHub(SampleMecanumDrive drive, double yOffset){
+        poseShippingHub = poseShippingHub.plus(new Pose2d(0, yOffset, 0));
+
+        trajectoryDetectToShippingHub = drive.trajectoryBuilder(trajectoryHomeToDetect.end())
+                .lineToLinearHeading(poseShippingHub)
                 .build();
 
-        Trajectory toHome = drive.trajectoryBuilder(toShippingHub.end())
-                .lineToLinearHeading(new Pose2d(0,0,0),
-                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL/2))
+        drive.followTrajectory(trajectoryDetectToShippingHub);
+    }
+
+    private void driveToHome(SampleMecanumDrive drive){
+        trajectoryShippingHubToHome = drive.trajectoryBuilder(trajectoryDetectToShippingHub.end())
+                .lineToLinearHeading(poseHome)
                 .build();
 
-        Trajectory toWarehouse = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(44.698, 1.62))
+        drive.followTrajectory(trajectoryShippingHubToHome);
+    }
+
+    private void driveToWarehouse(SampleMecanumDrive drive){
+        trajectoryHomeToWarehouse = drive.trajectoryBuilder(trajectoryShippingHubToHome.end())
+                .lineToLinearHeading(poseWarehousePose)
                 .build();
 
-        drive.followTrajectory(toShippingHub);
-        arm.release();
-        this.sleep(1500);
-        drive.followTrajectory(toHome);
-        this.sleep(500);
-        drive.followTrajectory(toWarehouse);
-        arm.move(Arm.PARK_POSITION);
+        drive.followTrajectory(trajectoryHomeToWarehouse);
     }
 }
