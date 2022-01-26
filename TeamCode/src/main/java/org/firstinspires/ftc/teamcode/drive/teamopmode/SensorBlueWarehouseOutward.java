@@ -26,7 +26,7 @@ public class SensorBlueWarehouseOutward extends LinearOpMode {
     private DistanceSensor rightSensor = null;
 
     private Pose2d poseHome = new Pose2d(0, 0, 0);
-    private Pose2d poseDetectRandomization = new Pose2d(13.076,-19.959,4.712);
+    private Pose2d poseDetectRandomization = new Pose2d(12.276,-19.959,4.712);
     private Pose2d poseShippingHub = new Pose2d(-2.105, -21.214, 4.354);
     private Pose2d poseWarehousePose = new Pose2d(44.698, -1.62, 0);
 

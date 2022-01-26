@@ -38,8 +38,8 @@ public class RedTeleOp extends LinearOpMode {
         carouselSpinnerMotor = (DcMotor) hardwareMap.get("carouselSpinner");
         carouselSpinner = new CarouselSpinner(carouselSpinnerMotor);
 
-        liftMotor = (DcMotor)hardwareMap.get("liftMotor");
-        lift = new Lift(liftMotor);
+//        liftMotor = (DcMotor)hardwareMap.get("liftMotor");
+//        lift = new Lift(liftMotor);
 
         armMotor = (DcMotor)hardwareMap.get("armMotor");
         handServo = (Servo)hardwareMap.get("handServo");

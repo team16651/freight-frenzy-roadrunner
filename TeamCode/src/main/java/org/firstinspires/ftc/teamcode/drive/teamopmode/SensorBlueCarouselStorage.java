@@ -34,7 +34,7 @@ public class SensorBlueCarouselStorage extends LinearOpMode {
     private Pose2d poseCarousel1 = new Pose2d(0,-3.5,0);
     private Pose2d poseCarousel2 = new Pose2d(-5.1, -3.5, 5.6);
     private Pose2d poseAvoidDuck = new Pose2d(-4.1, -8.5, 5.6);
-    private Pose2d poseDetectRandomization = new Pose2d(13,-19.25,4.712);
+    private Pose2d poseDetectRandomization = new Pose2d(12.75,-19.25,4.712);
     private Pose2d poseShippingHub1 = new Pose2d(36.049, -3.5, 5.05);
     private Pose2d poseShippingHub2 = new Pose2d(36.049, -19.385, 5.05);
     private Pose2d poseStorage = new Pose2d(-9.970, -27.670, 0);
@@ -101,8 +101,8 @@ public class SensorBlueCarouselStorage extends LinearOpMode {
     }
 
     private void spinCarousel(CarouselSpinner carouselSpinner){
-        carouselSpinner.spin(false, 0.5);
-        this.sleep(2500);
+        carouselSpinner.spin(false, 0.4);
+        this.sleep(3000);
         carouselSpinner.stop();
     }
 
